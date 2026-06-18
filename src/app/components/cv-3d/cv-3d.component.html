@@ -1,0 +1,17 @@
+<div
+  class="cv-3d-container"
+  (mousedown)="onMouseDown($event)"
+  (mousemove)="onMouseMove($event)"
+  (mouseup)="onMouseUp()"
+  (mouseleave)="onMouseLeave()"
+  (touchstart)="onTouchStart($event)"
+  (touchmove)="onTouchMove($event)"
+  (touchend)="onTouchEnd()"
+  (touchcancel)="onTouchEnd()"
+>
+  <div #canvas3d class="canvas-container"></div>
+
+  <div class="controls-hint">
+    <p>Drag or swipe to rotate the CV</p>
+  </div>
+</div>

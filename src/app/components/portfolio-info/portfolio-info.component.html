@@ -1,0 +1,71 @@
+<div class="portfolio-info-container">
+  <div class="info-header">
+    <h1>Alton Dsilva | Software Engineer | 23</h1>
+    <p class="subtitle">Explore my work and experience</p>
+  </div>
+
+  <div class="section-tabs">
+    <button
+      *ngFor="let sectionKey of ['about', 'skills', 'projects', 'contact']"
+      [class.active]="activeSection === sectionKey"
+      (click)="setActiveSection(sectionKey)"
+      class="tab-button"
+    >
+      {{ sectionKey | titlecase }}
+    </button>
+  </div>
+
+  <div class="section-content">
+    <div class="content-wrapper" [ngSwitch]="activeSection">
+      <!-- About Section -->
+      <div *ngSwitchCase="'about'" class="section-pane">
+        <h2>{{ currentSection.title }}</h2>
+        <p class="content-text">{{ currentSection.content }}</p>
+      </div>
+
+      <!-- Skills Section -->
+      <div *ngSwitchCase="'skills'" class="section-pane">
+        <h2>{{ currentSection.title }}</h2>
+        <div class="skills-grid">
+          <div *ngFor="let skillGroup of currentSection.items" class="skill-category">
+            <h3>{{ skillGroup.category }}</h3>
+            <div class="skill-tags">
+              <span *ngFor="let skill of skillGroup.skills" class="skill-tag">
+                {{ skill }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects Section -->
+      <div *ngSwitchCase="'projects'" class="section-pane">
+        <h2>{{ currentSection.title }}</h2>
+        <div class="projects-grid">
+          <div *ngFor="let project of currentSection.items" class="project-card">
+            <h3>{{ project.name }}</h3>
+            <p class="project-description">{{ project.description }}</p>
+            <div class="project-tags">
+              <span *ngFor="let tag of project.tags" class="tag">{{ tag }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Section -->
+      <div *ngSwitchCase="'contact'" class="section-pane">
+        <h2>{{ currentSection.title }}</h2>
+        <p class="content-text">{{ currentSection.content }}</p>
+        <div class="contact-links">
+          <a *ngFor="let link of currentSection.links" href="#" class="contact-link">
+            <span class="icon">{{ link.icon }}</span>
+            <div class="link-info">
+              <p class="label">{{ link.label }}</p>
+              <p class="value">{{ link.value }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
