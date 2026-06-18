@@ -420,6 +420,19 @@ export class CvViewerService {
     }
   };
 
+  zoom(delta: number): void {
+    if (!this.camera) return;
+
+    const zoomFactor = 0.01;
+
+    const minZoom = 0.5;
+    const maxZoom = 5;
+
+    const newZ = this.camera.position.z - delta * zoomFactor;
+
+    this.camera.position.z = Math.max(minZoom, Math.min(maxZoom, newZ));
+  }
+
   rotatePaper(deltaX: number, deltaY: number): void {
     if (this.paper) {
       this.paper.rotation.y += deltaX * 0.01;

@@ -15,7 +15,7 @@ export class Cv3dComponent implements OnInit, AfterViewInit, OnDestroy {
   private isDragging = false;
   private previousPosition = { x: 0, y: 0 };
   private initialized = false;
-
+  private lastPinchDistance = 0;
   constructor(private cvViewerService: CvViewerService) {}
 
   ngOnInit(): void {}
@@ -63,24 +63,40 @@ export class Cv3dComponent implements OnInit, AfterViewInit, OnDestroy {
   // Mobile
 
   onTouchStart(event: TouchEvent): void {
-    const touch = event.touches[0];
-    if (!touch) return;
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+      this.startDrag(touch.clientX, touch.clientY);
+    }
 
-    this.startDrag(touch.clientX, touch.clientY);
+    if (event.touches.length === 2) {
+      this.lastPinchDistance = this.getPinchDistance(event.touches[0], event.touches[1]);
+    }
   }
 
   onTouchMove(event: TouchEvent): void {
-    const touch = event.touches[0];
-    if (!touch) return;
-
-    // Prevent page scrolling while rotating
     event.preventDefault();
 
-    this.handleDrag(touch.clientX, touch.clientY);
+    // Single finger = rotate
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+      this.handleDrag(touch.clientX, touch.clientY);
+    }
+
+    // Two fingers = zoom
+    if (event.touches.length === 2) {
+      const currentDistance = this.getPinchDistance(event.touches[0], event.touches[1]);
+
+      const delta = currentDistance - this.lastPinchDistance;
+
+      this.cvViewerService.zoom(delta);
+
+      this.lastPinchDistance = currentDistance;
+    }
   }
 
   onTouchEnd(): void {
     this.stopDrag();
+    this.lastPinchDistance = 0;
   }
 
   private startDrag(x: number, y: number): void {
@@ -101,5 +117,12 @@ export class Cv3dComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stopDrag(): void {
     this.isDragging = false;
+  }
+
+  private getPinchDistance(touch1: Touch, touch2: Touch): number {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+
+    return Math.sqrt(dx * dx + dy * dy);
   }
 }
