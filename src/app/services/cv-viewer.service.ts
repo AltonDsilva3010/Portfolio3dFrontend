@@ -420,6 +420,15 @@ export class CvViewerService {
     }
   };
 
+  pan(deltaX: number, deltaY: number): void {
+    if (!this.camera) return;
+
+    const panSpeed = 0.003;
+
+    this.camera.position.x -= deltaX * panSpeed;
+    this.camera.position.y += deltaY * panSpeed;
+  }
+
   zoom(delta: number): void {
     if (!this.camera) return;
 

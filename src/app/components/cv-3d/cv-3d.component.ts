@@ -16,6 +16,7 @@ export class Cv3dComponent implements OnInit, AfterViewInit, OnDestroy {
   private previousPosition = { x: 0, y: 0 };
   private initialized = false;
   private lastPinchDistance = 0;
+  private previousPanCenter = { x: 0, y: 0 };
   constructor(private cvViewerService: CvViewerService) {}
 
   ngOnInit(): void {}
@@ -70,6 +71,11 @@ export class Cv3dComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (event.touches.length === 2) {
       this.lastPinchDistance = this.getPinchDistance(event.touches[0], event.touches[1]);
+
+      this.previousPanCenter = {
+        x: (event.touches[0].clientX + event.touches[1].clientX) / 2,
+        y: (event.touches[0].clientY + event.touches[1].clientY) / 2,
+      };
     }
   }
 
@@ -86,10 +92,21 @@ export class Cv3dComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event.touches.length === 2) {
       const currentDistance = this.getPinchDistance(event.touches[0], event.touches[1]);
 
-      const delta = currentDistance - this.lastPinchDistance;
+      const pinchDelta = currentDistance - this.lastPinchDistance;
 
-      this.cvViewerService.zoom(delta);
+      this.cvViewerService.zoom(pinchDelta);
 
+      const currentCenter = {
+        x: (event.touches[0].clientX + event.touches[1].clientX) / 2,
+        y: (event.touches[0].clientY + event.touches[1].clientY) / 2,
+      };
+
+      const panDeltaX = currentCenter.x - this.previousPanCenter.x;
+      const panDeltaY = currentCenter.y - this.previousPanCenter.y;
+
+      this.cvViewerService.pan(panDeltaX, panDeltaY);
+
+      this.previousPanCenter = currentCenter;
       this.lastPinchDistance = currentDistance;
     }
   }
